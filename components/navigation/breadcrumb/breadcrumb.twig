@@ -1,0 +1,37 @@
+{#
+/**
+ * @file
+ * Component for a breadcrumb trail.
+ *
+ * Variables:
+ * - modifier_class: [string] Classes to modify the default component styling.
+ * - heading: [string] Accessible heading.
+ * - breadcrumb: [array] The breadcrumb trail items. Each item is an object
+ *   containing:
+ *   - text: [string] Text of the item.
+ *   - url: [string] URL of the item (optional).
+ */
+#}
+{{ attach_library('zensubtheme/breadcrumb') }}
+{% set url = url('<current>') %}
+<nav class="breadcrumb {{modifier_class}}" role="navigation" aria-labelledby="system-breadcrumb">
+  <h2 id="system-breadcrumb" class="visually-hidden">{{ heading|default('You are here') }}</h2>
+  <ol class="breadcrumb__list">
+    {% for item in breadcrumb %}
+      <li class="breadcrumb__item">
+        {% if item.url %}
+          {% if item.text == 'Home' and 'jp' in url|render|render %}
+          <a href="{{ item.url }}">ホーム</a>
+          {% else %}
+          <a href="{{ item.url }}">{{ item.text }}</a>
+          {% endif %}
+        {% else %}
+          {{ item.text }}
+        {% endif %}
+        {% if not loop.last %}
+          ›
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ol>
+</nav>
