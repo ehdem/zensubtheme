@@ -1,0 +1,89 @@
+{% extends "@myComponents/base/root/base-root.twig" %}
+{#
+/**
+ * @file
+ * Returns the HTML for the basic structure of a single Drupal page.
+ *
+ * Variables:
+ * - logged_in: A flag indicating if user is logged in.
+ * - root_path: The root path of the current page (e.g., node, admin, user).
+ * - node_type: The content type for the current node, if the page is a node.
+ * - head_title: List of text elements that make up the head_title variable.
+ *   May contain or more of the following:
+ *   - title: The title of the page.
+ *   - name: The name of the site.
+ *   - slogan: The slogan of the site.
+ * - page_top: Initial rendered markup. This should be printed before 'page'.
+ * - page: The rendered page markup.
+ * - page_bottom: Closing rendered markup. This variable should be printed after
+ *   'page'.
+ * - db_offline: A flag indicating if the database is offline.
+ * - placeholder_token: The token for generating head, css, js and js-bottom
+ *   placeholders.
+ *
+ * @see template_preprocess_html()
+ */
+#}
+{% set title_class = head_title['title'] %}
+{%
+  set attributes = attributes.addClass([
+    logged_in ? 'is-logged-in-user',
+    not root_path ? 'is-path-frontpage' : 'is-path-' ~ root_path|clean_class,
+    node_type ? 'is-page-node-type-' ~ node_type|clean_class,
+    db_offline ? 'is-db-offline',
+    title_class,
+    current_page_language,
+  ])
+%}
+{% set title = head_title|safe_join(' | ') %}
+{% block head %}
+  <head-placeholder token="{{ placeholder_token|raw }}">
+  
+<!-- OneTrust Cookies Consent Notice start for participantsla.altasciences.com -->
+<script src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js" data-document-language="true" type="text/javascript" charset="UTF-8" data-domain-script="0d3b7229-a444-4d6e-80cd-ba8411b38a6c" ></script>
+<script type="text/javascript">
+function OptanonWrapper() { }
+</script>
+<!-- OneTrust Cookies Consent Notice end for participantsla.altasciences.com -->
+
+  
+  {{ parent() }}
+  <css-placeholder token="{{ placeholder_token|raw }}">
+  <js-placeholder token="{{ placeholder_token|raw }}">
+      
+  <!-- Meta Pixel Code -->
+	<script>
+	!function(f,b,e,v,n,t,s)
+	{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+	n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+	if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+	n.queue=[];t=b.createElement(e);t.async=!0;
+	t.src=v;s=b.getElementsByTagName(e)[0];
+	s.parentNode.insertBefore(t,s)}(window, document,'script',
+	'https://connect.facebook.net/en_US/fbevents.js');
+	fbq('init', '1704786986450509');
+	fbq('track', 'PageView');
+	</script>
+	<noscript><img height="1" width="1" style="display:none"
+	src="https://www.facebook.com/tr?id=1704786986450509&ev=PageView&noscript=1"
+	/></noscript>
+	<!-- End Meta Pixel Code -->
+	
+	<meta name="facebook-domain-verification" content="6pognksby206tzy7lspvu1ef01mvd5" />
+	
+{% endblock %}
+
+{% block body %}
+  {%
+    include "@myComponents/navigation/skip-link/skip-link.twig" with {
+      modifier_class: 'visually-hidden visually-hidden--focusable',
+      url: '#main-content',
+      text: 'Skip to main content'|t
+    } only
+  %}
+  
+  {{ page_top }}
+  {{ page }}
+  {{ page_bottom }}
+  <js-bottom-placeholder token="{{ placeholder_token|raw }}">
+{% endblock %}

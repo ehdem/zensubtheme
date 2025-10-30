@@ -1,0 +1,278 @@
+{% extends "@myComponents/containers/article/article.twig" %}
+{#
+/**
+ * @file
+ * Theme override to display a node.
+ *
+ * Available variables:
+ * - node: The node entity with limited access to object properties and methods.
+ *   Only method names starting with "get", "has", or "is" and a few common
+ *   methods such as "id", "label", and "bundle" are available. For example:
+ *   - node.bundle will return the machine name of the content type.
+ *   - node.getCreatedTime() will return the node creation timestamp.
+ *   - node.hasField('field_example') returns TRUE if the node bundle includes
+ *     field_example. (This does not indicate the presence of a value in this
+ *     field.)
+ *   - node.isPublished() will return whether the node is published or not.
+ *   - node.isPromoted() will return whether the node is promoted to the front
+ *     page or not.
+ *   - node.isSticky() will return whether the node should be sticky to the top
+ *     of the current list.
+ *   Calling other methods, such as node.delete(), will result in an exception.
+ *   See \Drupal\node\Entity\Node for a full list of public properties and
+ *   methods for the node object.
+ * - label: The title of the node.
+ * - content: All node items. Use {{ content }} to print them all,
+ *   or print a subset such as {{ content.field_example }}. Use
+ *   {{ content|without('field_example') }} to temporarily suppress the printing
+ *   of a given child element.
+ * - author_picture: The node author user entity, rendered using the "compact"
+ *   view mode.
+ * - metadata: Metadata for this node.
+ * - date: Themed creation date field.
+ * - author_name: Themed author name field.
+ * - url: Direct URL of the current node.
+ * - display_submitted: Whether submission information should be displayed.
+ * - attributes: HTML attributes for the containing element.
+ *   The attributes.class element may contain one or more classes.
+ * - title_attributes: Same as attributes, except applied to the main title
+ *   tag that appears in the template.
+ * - content_attributes: Same as attributes, except applied to the main
+ *   content tag that appears in the template.
+ * - author_attributes: Same as attributes, except applied to the author of
+ *   the node tag that appears in the template.
+ * - title_prefix: Additional output populated by modules, intended to be
+ *   displayed in front of the main title tag that appears in the template.
+ * - title_suffix: Additional output populated by modules, intended to be
+ *   displayed after the main title tag that appears in the template.
+ * - view_mode: View mode; for example, "teaser" or "full".
+ * - teaser: Flag for the teaser state. Will be true if view_mode is 'teaser'.
+ * - page: Flag for the full page state. Will be true if view_mode is 'full'.
+ * - readmore: Flag for more state. Will be true if the teaser content of the
+ *   node cannot hold the main body content.
+ * - logged_in: Flag for authenticated user status. Will be true when the
+ *   current user is a logged-in member.
+ * - is_admin: Flag for admin user status. Will be true when the current user
+ *   is an administrator.
+ *
+ * @see template_preprocess_node()
+ */
+#}
+{% set modifier_class = attributes.class %}
+{% set attributes = attributes.removeAttribute('class') %}
+
+{% set participant_portal_url = drupal_config('my_api_client.settings', 'participant_portal_url') %}
+
+
+{% block heading %}
+  {{ title_prefix }}
+  {% if not page %}
+    {% set heading = label %}
+    {% set headingAttributes = title_attributes %}
+    {{ parent() }}
+  {% endif %}
+  {{ title_suffix }}
+{% endblock heading %}
+
+{% set footer = display_submitted or node.in_preview or not node.isPublished() %}
+{% block footer %}
+  {% if node.in_preview or not node.isPublished() %}
+    {%
+      include "@myComponents/components/watermark/watermark.twig" with {
+        "content": node.in_preview ? "Preview"|t : "Unpublished"|t
+      } only
+    %}
+  {% endif %}
+  {% endblock %}
+  {% block content %}
+  
+{%
+  set bgimage = file_url(content.field_header_image.0['#item'].entity.uri.value)
+%}
+ 
+	<div class="banner-with-form">
+		<div class="banner-image">
+			<img src="{{ bgimage }}" alt="Background_image" style="width:auto;">
+		</div>
+		<div class="banner-form alta-pb-60">
+			<div class="alta-boxed-width">
+				<div class="alta-row">
+				
+					<div class="alta-offset-col-1 alta-col-lg-8">
+						<div class="banner-form-right-studies">
+							<h1>{{ node.title.0.value }}</h1>
+							<p>{{ node.field_introduction.0.value|raw }}</p>
+							<div class="general-info">
+								<div class="essential-info">
+								
+								<div class="text-container">
+    
+
+								
+								
+									<!-- Gender block Start -->
+									
+									
+										{% if node.field_males.0.value == 1 and node.field_females.0.value == 1 %}
+											<div class="text-item"><img loading="lazy" src="/sites/default/files/2024-05/Alta_Icons-01.jpg" alt="Males and Females" width="100" height="60" /></div>
+										{% elseif node.field_males.0.value == 1 %}
+											<div class="text-item"><img loading="lazy" src="/sites/default/files/2024-08/Alta_Icons-02_1.jpg" alt="Males" width="100" height="60" /></div>
+										{% elseif node.field_females.0.value == 1 %}
+											<div class="text-item"><img loading="lazy" src="/sites/default/files/2024-08/Alta_Icons-03.jpg" alt="Females" width="100" height="60" /></div>
+										{% endif %}
+										
+									
+									<!-- Gender block End -->
+						  
+									<!-- Smoker or Not  block Start -->
+									
+						  
+										{% if node.field_smoker.0.value == 1 %}
+											<div class="text-item"><img loading="lazy" src="/sites/default/files/2024-08/icon-smoker-brown.png" alt="Smoker" width="40" height="60" /></div>
+						  
+										{% elseif node.field_smoker.0.value == 2 %}
+											<div class="text-item"><img loading="lazy" src="/sites/default/files/2024-08/icon-no-smoke-brown.png" alt="Non / Ex-smoker only" width="40" height="60" /></div>
+										{% endif %}
+										
+									
+									<!-- Smoker block End -->
+						  
+									<!-- Pot Smoking block start -->
+									
+						  
+										{% if node.field_pot_smoking.0.value == 0 %}
+											<div class="text-item"><img loading="lazy" src="/sites/default/files/2024-08/icon-no-marijuana_colors.png" alt="No Pot smoking" width="40" height="60" /></div>
+										{% endif %}
+									
+									<!-- Pot Smoking  block End -->
+						  
+									<!-- Age  block Start -->
+									
+										<div class="text-item age"><span class="hide-text">Age: </span>
+										{{ node.field_age_min.0.value }} - {{ node.field_age_max.0.value }} 
+										</div>
+										<div class="text-item age">
+										{% if node.field_online_only.0.value == 1 %}
+											<span class="hide-text">Online only</span>
+										{% endif %}
+										</div>
+									
+									<!-- Age  block End -->
+									
+								</div>	
+									<!-- Online only  block End -->
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<!-- Qualifications block Start -->
+<div class="qualifiction-block alta-py-60">
+	<div class="alta-boxed-width">
+		<h2 class="alta-title">{{ node.field_qualifications_infor_title.0.value }}</h2>
+		<div class="alta-row">
+			<div class="alta-col-lg-12">
+				
+				<div class="qualifiction-wrapper alta-row">
+					{% if node.field_qualifications_informatio2 is not empty %}
+					<div class="alta-col-lg-4">
+						<div class="qualification-all-must-apply">
+							<div class="qualifiction-content">
+								{{ node.field_qualifications_information.0.value|raw }}
+							</div>
+						</div>
+					</div>
+					{% endif %}
+					{% if node.field_qualifications_informatio2 is not empty %}
+						<div class="alta-col-lg-4">
+							<div class="qualification-may-receive">
+								<div class="qualifiction-content">
+									{{ node.field_qualifications_informatio2.0.value|raw }}
+								</div>
+							</div>
+						</div>
+					{% endif %}
+					{% if node.field_pill_restriction is not empty %}
+						<div class="alta-col-lg-4">
+							<div class="qualification-categories">
+								<div class="qualifiction-content">
+								   {{ node.field_pill_restriction.0.value|raw }}
+								</div>
+							</div>
+						</div>
+					{% endif %}
+					{% if node.field_clinic_stay_date_range is not empty %}
+						<div class="alta-col-lg-4">
+							<div class="qualification-categories">
+								<h4 class="alta-title">{{ node.field_clinic_stay_title.0.value }}</h4>
+								<div class="qualifiction-content">
+									{% for item in node.field_clinic_stay_date_range %}
+										<p>{{ item.value|date("m/d/Y") }}  - {{ item.end_value|date("m/d/Y") }} </p>
+									{% endfor %}
+								</div>
+							</div>
+						</div>
+					{% endif %}
+					{% if node.field_return_dates is not empty %}
+						<div class="alta-col-lg-4">
+							<div class="qualification-categories">
+								<h4 class="alta-title">{{ node.field_outpatient_visits_title.0.value }}</h4>
+								<div class="qualifiction-content">
+									{% for item in node.field_return_dates %}
+										<p>{{ item.value |date("m/d/Y") }}</p>
+									{% endfor %}
+								</div>
+							</div>
+						</div>
+					{% endif %}
+					{% if node.field_see_other_dates is not empty %}
+						<div class="alta-col-lg-4">
+							<div class="qualification-categories">
+								<h4 class="alta-title">{{ node.field_see_other_dates_title.0.value }}</h4>
+								<div class="qualifiction-content">
+									
+									{{ node.field_see_other_dates.0.value|raw }}
+									
+								</div>
+							</div>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Qualifications block End -->
+
+
+{% set url = participant_portal_url ~ "?nid=" ~ node.id ~ "&study_crmid=" ~ node.field_crmid.0.value ~ "&study_number=" ~ node_alias_last_segment %}
+
+{% if node.field_ftf.0.value == 1 and node.field_ftf_webform_url.0.value is not empty %}
+	{% set url = render_var(url('<front>')) ~ node.field_ftf_webform_url.0.value ~ "?study_number=" ~ node_alias_last_segment %}
+{% endif %}
+
+
+<div class="qualifiction-block alta-py-60">
+	<div class="alta-boxed-width">
+		
+		{% if node.field_comments is not empty %}
+			<div class="alta-row">
+				<p>{{ node.field_comments.0.value|raw }}</p>
+			</div>
+		{% endif %}
+		<div class="align-center alta-cta-wrapper">
+			<a class="alta-btn dark-gray" href="{{ url }}" tabindex="-1" target="_blank">Apply</a>
+		</div>
+
+
+	</div>
+</div>
+
+
+
+{% endblock %}
+
